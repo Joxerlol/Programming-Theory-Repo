@@ -1,33 +1,74 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     private float horizontalInput;
     private float verticalInput;
-    private float speed = 10.0f;
+    private float speed = 8.0f;
     private float xRange = 17.5f;
     private float zbotRange = -7.5f;
     private float ztopRange = 11.5f;
+    private float projectileCooldown = 1.0f;
+    public bool isAlive;
+    // ENCAPSULATION
+    private int health = 50;
+    public int Health
+    { 
+        get { return health; }
+        set { health = value; } 
+    }
+
 
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private Text hpCounter;
 
+    private GameManager gameManager;
     private Camera mainCamera;
     public List<GameObject> projectilePrefab;
 
 
     private void Start()
     {
+        isAlive = true;
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         mainCamera = Camera.main;
     }
 
     void Update()
-    {
+    {              
+        // ABSTRACTION
         Move();
         GameBorders();
         Aim();
         Shoot();
+        Die();
+        UpdateHP();
+        WeaponCooldown();
+    }
+
+    private void WeaponCooldown()
+    {
+        if (projectileCooldown > 0)
+        {
+            projectileCooldown -= Time.deltaTime;
+        }
+    }
+
+    private void Die()
+    {
+        if (health == 0)
+        {
+            isAlive = false;
+            Destroy(gameObject);
+        }
+
+        if (!isAlive)
+        {
+            gameManager.GameOver();
+        }
     }
 
     private void Move()
@@ -93,16 +134,30 @@ public class PlayerController : MonoBehaviour
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+                 
+
+        if (Input.GetKeyDown(KeyCode.Mouse0) && projectileCooldown <= 0)
         {
+            projectileCooldown = 0.7f;
             Instantiate(projectilePrefab[0], transform.position, transform.rotation);
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyDown(KeyCode.Mouse1) && projectileCooldown <= 0)
         {
+            projectileCooldown = 0.8f;
             Instantiate(projectilePrefab[1], transform.position, transform.rotation);
         }
+        
+        
+    }    
+
+    private void UpdateHP()
+    {
+        hpCounter.text = ("HP: " + health + "/50");
     }
 
-    
+
+
+
+
 }

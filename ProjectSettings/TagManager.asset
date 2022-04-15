@@ -6,6 +6,10 @@ TagManager:
   tags:
   - DogFood
   - ZombieFood
+  - Car
+  - Zombie
+  - Dog
+  - Ground
   layers:
   - Default
   - TransparentFX

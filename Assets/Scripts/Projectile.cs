@@ -15,6 +15,26 @@ public class Projectile : MonoBehaviour
         DestroyOutOfBounds();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Car") == true)
+        {
+            Destroy(gameObject);            
+        }  
+        
+        if (CompareTag("ZombieFood") && other.CompareTag("Zombie"))
+        {
+            Destroy(gameObject);
+            Destroy(other.gameObject);
+        }
+
+        if (CompareTag("DogFood") && other.CompareTag("Dog"))
+        {
+            Destroy(gameObject);
+            Destroy(other.gameObject);
+        }
+    }
+
     void Launch()
     {
         transform.Translate(Vector3.forward * Time.deltaTime * speed);
@@ -42,4 +62,5 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    
 }
